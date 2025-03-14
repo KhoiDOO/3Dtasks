@@ -7,8 +7,8 @@ from PIL import Image
 from datetime import datetime
 import json
 
-sys.path.append('..')
-from submodules.mvdream_diffusers.pipeline_mvdream import MVDreamPipeline
+sys.path.append("..")
+from submodules.mvdream import MVDreamPipeline
 
 # Parse command-line arguments
 parser = argparse.ArgumentParser(description="Generate multi-view images and save them.")
@@ -87,18 +87,18 @@ grid_path = os.path.join(output_folder, "grid.png")
 grid.save(grid_path, format="PNG")
 
 # Create a video from the frames
-video_path = os.path.join(output_folder, "output_video.mp4")
-fps = 5  # Frames per second
-fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # Codec for .mp4 files
-video_writer = cv2.VideoWriter(video_path, fourcc, fps, frame_size)
+# video_path = os.path.join(output_folder, "output_video.mp4")
+# fps = 5  # Frames per second
+# fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # Codec for .mp4 files
+# video_writer = cv2.VideoWriter(video_path, fourcc, fps, frame_size)
 
-for img_path in image_paths:
-    frame = cv2.imread(img_path)  # Read each frame
-    video_writer.write(frame)  # Write the frame to the video
+# for img_path in image_paths:
+#     frame = cv2.imread(img_path)  # Read each frame
+#     video_writer.write(frame)  # Write the frame to the video
 
-video_writer.release()  # Finalize the video
+# video_writer.release()  # Finalize the video
 
 print(f"Images saved to folder: {output_folder}")
 print(f"Grid saved to: {grid_path}")
 print(f"Configuration saved to: {config_path}")
-print(f"Video saved to: {video_path}")
+# print(f"Video saved to: {video_path}")

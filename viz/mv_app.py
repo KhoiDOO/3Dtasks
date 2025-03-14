@@ -1,6 +1,6 @@
 import sys
-sys.path.append('..')
-from submodules.mvdream_diffusers.pipeline_mvdream import MVDreamPipeline
+sys.path.append("..")
+from submodules.mvdream import MVDreamPipeline
 
 import dash
 import dash_bootstrap_components as dbc
