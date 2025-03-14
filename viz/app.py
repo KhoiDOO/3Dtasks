@@ -5,14 +5,14 @@ import os
 
 import dash
 import dash_bootstrap_components as dbc
-from dash import html
-from dash import dcc
 import argparse
 
+from dash import html
+from dash import dcc
 from dash.dependencies import Input, Output, State
 
-from component import get_navbar
-from utils import read_off, build_mesh_graph, build_pcloud_graph, PointSampler, point_sampler
+from viz.component import get_navbar
+from viz.utils import read_off, build_mesh_graph, build_pcloud_graph, point_sampler
 
 def list_files(directory):
     files = []
@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
     app.layout = html.Div(
         [
-            get_navbar(),
+            get_navbar(name="Mesh Viewer"),
             dbc.Container(
                 [
                     dbc.Row([
