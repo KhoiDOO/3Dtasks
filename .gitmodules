@@ -1,0 +1,3 @@
+[submodule "submodules/mvdream_diffusers"]
+	path = submodules/mvdream_diffusers
+	url = https://github.com/ashawkey/mvdream_diffusers.git
