@@ -9,3 +9,9 @@ pip install -U pip wheel
 pip3 install torch torchvision torchaudio
 pip install -r requirements.txt
 ```
+
+## MVDream 
+### Diffuers Pipeline
+```
+
+```
