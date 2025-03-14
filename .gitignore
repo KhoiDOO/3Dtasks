@@ -174,3 +174,4 @@ cython_debug/
 .pypirc
 
 data/src
+viz/mv_out
