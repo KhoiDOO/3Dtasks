@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..')
 from submodules.mvdream_diffusers.pipeline_mvdream import MVDreamPipeline
 
 import dash
@@ -9,8 +11,8 @@ from dash import html
 from dash import dcc
 from dash.dependencies import Input, Output, State
 
-from viz.component import get_navbar
-from viz.utils import array_to_base64
+from component import get_navbar
+from utils import array_to_base64
 
 # Initialize the app
 external_stylesheets = [dbc.themes.BOOTSTRAP]
@@ -36,8 +38,7 @@ app.layout = html.Div(
                                 dcc.Dropdown(
                                     id="model-dropdown",
                                     options=[
-                                        {"label": "ashawkey/mvdream-sd2.1-diffusers", "value": "ashawkey/mvdream-sd2.1-diffusers"},
-                                        {"label": "ashawkey/mvdream-sd2.0-diffusers", "value": "ashawkey/mvdream-sd2.0-diffusers"},
+                                        {"label": "ashawkey/mvdream-sd2.1-diffusers", "value": "ashawkey/mvdream-sd2.1-diffusers"}
                                     ],
                                     placeholder="Select a model",
                                 ),
@@ -49,6 +50,24 @@ app.layout = html.Div(
                                     max=10,
                                     step=1,
                                     value=4,
+                                ),
+                                dcc.Input(
+                                    id="guidance-scale",
+                                    type="number",
+                                    placeholder="Enter guidance scale",
+                                    min=1,
+                                    max=20,
+                                    step=0.1,
+                                    value=5,
+                                ),
+                                dcc.Input(
+                                    id="num-inference-steps",
+                                    type="number",
+                                    placeholder="Enter number of inference steps",
+                                    min=10,
+                                    max=100,
+                                    step=1,
+                                    value=30,
                                 ),
                                 html.Button("Generate Frames", id="generate-button", n_clicks=0),
                             ],
@@ -75,9 +94,11 @@ app.layout = html.Div(
     State("text-prompt", "value"),
     State("model-dropdown", "value"),
     State("num-frames", "value"),
+    State("guidance-scale", "value"),
+    State("num-inference-steps", "value"),
 )
-def generate_frames(n_clicks, prompt, model, num_frames):
-    if n_clicks > 0 and prompt and model and num_frames:
+def generate_frames(n_clicks, prompt, model, num_frames, guidance_scale, num_inference_steps):
+    if n_clicks > 0 and prompt and model and num_frames and guidance_scale and num_inference_steps:
         # Load the pipeline
         pipe = MVDreamPipeline.from_pretrained(
             model,
@@ -86,22 +107,27 @@ def generate_frames(n_clicks, prompt, model, num_frames):
         )
         pipe = pipe.to("cuda")
 
-        # Generate frames using the num_frames argument
-        images = pipe(prompt, guidance_scale=5, num_inference_steps=30, num_frames=num_frames)
+        # Generate frames using the specified arguments
+        images = pipe(prompt, guidance_scale=guidance_scale, num_inference_steps=num_inference_steps, num_frames=num_frames)
 
         # Create individual image views for each frame
         image_views = []
         for idx, image in enumerate(images):
-            image_html = html.Div(
+            image_html = dbc.Col(
                 [
-                    html.Img(src=f"data:image/png;base64,{array_to_base64(image)}", style={"width": "100%"}),
-                    html.P(f"Frame {idx + 1}", style={"text-align": "center"}),
+                    html.Div(
+                        [
+                            html.Img(src=f"data:image/png;base64,{array_to_base64(image)}", style={"width": "100%"}),
+                            html.P(f"Frame {idx + 1}", style={"text-align": "center"}),
+                        ],
+                        style={"margin-bottom": "20px"},
+                    )
                 ],
-                style={"margin-bottom": "20px"},
+                xs=12, sm=6, md=4, lg=3, xl=3,  # Responsive column widths
             )
             image_views.append(image_html)
 
-        return dbc.Row([dbc.Col(image_view, width=6) for image_view in image_views])
+        return dbc.Row(image_views, className="g-3")  # Add spacing between rows
 
     return html.Div("Enter all inputs and click 'Generate Frames'.")
 
